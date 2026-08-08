@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!--
+        logback-spring.xml - Custom logging for VaultPay
+
+        Why logback-spring.xml and not logback.xml?
+        Spring Boot processes this file AFTER loading the Spring environment,
+        so springProfile tags and Spring property placeholders work here.
+
+        MDC keys set by LoggingFilter (appear in every log line):
+          traceId - unique 8-char UUID per request
+          ip      - client IP address
+    -->
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="APP_NAME"
+                    source="spring.application.name" defaultValue="vaultpay"/>
+
+    <!--
+        Console Appender with MDC-enriched pattern.
+
+        Pattern tokens:
+          %d{HH:mm:ss.SSS}  - timestamp
+          %-5level           - log level left-padded to 5 chars
+          %X{traceId:-?}     - traceId from MDC, or "?" for background threads
+          %X{ip:-none}       - client IP from MDC, or "none" for background threads
+          %logger{30}        - logger class name truncated to 30 chars
+          %msg               - the actual log message
+          %n                 - newline
+          %ex                - full exception stack trace if present
+    -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%clr(%d{HH:mm:ss.SSS}){faint} %clr(%-5level){blue} %clr([%X{traceId:-?}]){cyan} %clr([%X{ip:-none}]){faint} %clr(%-30.30logger{29}){cyan} : %msg%n%ex</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- Our application code at DEBUG to see all internal log statements -->
+    <logger name="com.srinivas.vaultpay" level="DEBUG"/>
+
+    <!-- Flyway: INFO to see which migrations run on startup -->
+    <logger name="org.flywaydb" level="INFO"/>
+
+    <!-- Spring Security: WARN by default, very verbose at DEBUG -->
+    <logger name="org.springframework.security" level="WARN"/>
+
+    <!-- Hibernate SQL: controlled by show-sql in application yaml -->
+    <logger name="org.hibernate.SQL" level="WARN"/>
+
+    <!-- HikariCP: only warn on connection pool issues -->
+    <logger name="com.zaxxer.hikari" level="WARN"/>
+
+    <!-- Spring Web: WARN to suppress noisy request mapping startup logs -->
+    <logger name="org.springframework.web" level="WARN"/>
+
+    <!-- Local profile (MySQL): enable security DEBUG for JWT debugging -->
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        <logger name="org.springframework.security" level="DEBUG"/>
+    </springProfile>
+
+    <!-- Dev profile (H2 + tests) -->
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- Default fallback if no profile is active -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

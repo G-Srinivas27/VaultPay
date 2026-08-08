@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: vaultpay
+  profiles:
+    active: local   # 'local' → MySQL (your machine)
+                    # 'dev'   → H2 in-memory (used by mvn test)
+                    # 'prod'  → production DB (future)

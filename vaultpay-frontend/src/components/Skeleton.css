@@ -1,0 +1,44 @@
+/* components/Skeleton.css */
+/* 
+  Animated shimmer effect for skeleton loaders.
+  Uses a gradient background that animates horizontally.
+*/
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s infinite linear;
+  display: inline-block;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Specific skeleton layouts for tables */
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skeleton-cell {
+  flex: 1;
+}
+
+/* Profile specific */
+.skeleton-avatar {
+  border-radius: 50% !important;
+}

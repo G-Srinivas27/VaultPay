@@ -1,0 +1,380 @@
+/* pages/DashboardPage.css */
+
+/* ─── Loading State ──────────────────────────────────────────────────────── */
+.dashboard-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--color-text-muted);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.2);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Page Layout ────────────────────────────────────────────────────────── */
+.dashboard-page {
+  min-height: 100vh;
+}
+
+.dashboard-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ─── Greeting ───────────────────────────────────────────────────────────── */
+.dashboard-greeting h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.dashboard-greeting p {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+/* ─── Grid Layout ────────────────────────────────────────────────────────── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto;
+  gap: 20px;
+}
+
+/* Wallet balance card — spans 7 of 12 columns */
+.balance-card {
+  grid-column: span 7;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+/* Stat cards — span 3 columns each (when standalone) */
+.stat-card {
+  grid-column: span 3;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Stats column container — spans 5 columns */
+.stats-col {
+  grid-column: span 5;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.stats-col .stat-card {
+  grid-column: auto; /* Reset grid span since it's now in a flex container */
+  height: 100%;
+}
+
+/* Quick actions — spans 5 columns */
+.actions-card {
+  grid-column: span 5;
+  padding: 28px;
+}
+
+/* Recent transactions — spans 7 columns */
+.transactions-card {
+  grid-column: span 7;
+  padding: 28px;
+}
+
+/* Analytics chart — spans 12 columns */
+.analytics-card {
+  grid-column: span 12;
+  padding: 28px;
+}
+
+/* ─── Balance Card ───────────────────────────────────────────────────────── */
+.balance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.balance-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.wallet-status {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-active  { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+.status-frozen  { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+.status-closed  { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+.balance-amount {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.balance-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wallet-currency {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.wallet-id {
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+}
+
+.balance-orb {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(99,102,241,0.15), transparent);
+  border-radius: 50%;
+  right: -60px;
+  bottom: -80px;
+  pointer-events: none;
+}
+
+/* ─── Stat Cards ─────────────────────────────────────────────────────────── */
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stat-icon-green { background: rgba(16,185,129,0.15); color: var(--color-success); }
+.stat-icon-red   { background: rgba(239,68,68,0.15);  color: var(--color-danger); }
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ─── Actions Card ───────────────────────────────────────────────────────── */
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+
+.actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: rgba(255,255,255,0.03);
+  color: var(--color-text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.action-btn:hover {
+  background: rgba(99,102,241,0.08);
+  border-color: rgba(99,102,241,0.4);
+  transform: translateX(4px);
+}
+
+.action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.action-deposit  .action-icon { background: rgba(16,185,129,0.15); color: var(--color-success); }
+.action-withdraw .action-icon { background: rgba(239,68,68,0.15);  color: var(--color-danger); }
+.action-transfer .action-icon { background: rgba(99,102,241,0.15); color: var(--color-primary-light); }
+
+/* ─── Transactions Card ──────────────────────────────────────────────────── */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.view-all-link {
+  font-size: 0.85rem;
+  color: var(--color-primary-light);
+  font-weight: 500;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-faint);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.transaction-item:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.tx-type-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.badge-credit { background: rgba(16,185,129,0.15); color: var(--color-success); }
+.badge-debit  { background: rgba(239,68,68,0.15);  color: var(--color-danger); }
+
+.tx-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tx-description {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-date {
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+}
+
+.tx-amount-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.tx-amount {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.amount-credit { color: var(--color-success); }
+.amount-debit  { color: var(--color-danger); }
+
+.tx-balance {
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+/* ─── Mobile Responsiveness ─────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .balance-card { grid-column: span 12; }
+  .actions-card { grid-column: span 12; }
+  .transactions-card { grid-column: span 12; }
+  .stats-col { grid-column: span 12; flex-direction: row; flex-wrap: wrap; }
+  .stats-col .stat-card { flex: 1; min-width: 200px; }
+}
+
+@media (max-width: 768px) {
+  .dashboard-main { padding: 24px 16px; gap: 24px; }
+  .balance-amount { font-size: 2.2rem; }
+  .actions-grid { flex-direction: row; flex-wrap: wrap; }
+  .action-btn { flex: 1; min-width: 120px; justify-content: center; flex-direction: column; text-align: center; gap: 8px; }
+  .action-icon { margin: 0 auto; }
+}
+
+@media (max-width: 480px) {
+  .stats-col { flex-direction: column; }
+  .tx-details { max-width: 150px; }
+}
