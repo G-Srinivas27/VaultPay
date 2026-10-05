@@ -1,0 +1,10 @@
+# Don't copy these into the Docker image — they're unnecessary or generated
+target/              # Compiled output (we rebuild inside Docker)
+.git/                # Git history (not needed in production)
+.gitignore
+.idea/               # IntelliJ settings
+*.iml                # IntelliJ module files
+.vscode/             # VS Code settings
+*.md                 # Documentation
+Dockerfile           # The Dockerfile itself (meta!)
+.dockerignore        # This file

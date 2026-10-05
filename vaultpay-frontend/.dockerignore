@@ -1,0 +1,9 @@
+# Don't copy these into the Docker image
+node_modules/        # Dependencies (we run npm ci inside Docker)
+dist/                # Build output (we rebuild inside Docker)
+.git/
+.gitignore
+.vscode/
+*.md
+Dockerfile
+.dockerignore

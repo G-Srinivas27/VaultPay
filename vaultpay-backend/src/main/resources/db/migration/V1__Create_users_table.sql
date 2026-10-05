@@ -1,17 +1,23 @@
 -- ============================================================
--- V1 — Create users table
+-- V1 — Create users table (PostgreSQL)
 -- ============================================================
 -- This is the first migration. It defines the users table
 -- which is the foundation of VaultPay — all other tables
 -- reference this one.
 --
--- Why separate files per table?
--- Each migration is atomic — if V2 fails, V1 stays intact.
--- You can see exactly WHEN each table was created and WHY.
+-- Key differences from MySQL version:
+--   AUTO_INCREMENT     → GENERATED ALWAYS AS IDENTITY
+--   ENUM('ADMIN','USER') → VARCHAR(20) + CHECK constraint
+--   BIT                → BOOLEAN
+--   DATETIME(6)        → TIMESTAMP(6)
+--   ENGINE/CHARSET     → not needed in PostgreSQL
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS users (
-    id              BIGINT          NOT NULL AUTO_INCREMENT,
+    -- GENERATED ALWAYS AS IDENTITY = PostgreSQL's auto-increment
+    -- 'ALWAYS' means the DB controls the value; you can't manually insert an ID
+    -- (use 'BY DEFAULT' if you need to override sometimes)
+    id              BIGINT          GENERATED ALWAYS AS IDENTITY,
 
     -- Core user fields
     first_name      VARCHAR(100)    NOT NULL,
@@ -19,25 +25,24 @@ CREATE TABLE IF NOT EXISTS users (
     email           VARCHAR(200)    NOT NULL,
     password_hash   VARCHAR(255)    NOT NULL,
 
-    -- Role — ENUM restricts to valid values at DB level
-    -- Application layer also validates, but DB is the last line of defence
-    role            ENUM('ADMIN', 'USER') NOT NULL DEFAULT 'USER',
+    -- Role — CHECK constraint replaces MySQL ENUM
+    -- PostgreSQL doesn't have a native ENUM type (well, it does via CREATE TYPE,
+    -- but VARCHAR + CHECK is simpler, more portable, and easier to modify later)
+    role            VARCHAR(20)     NOT NULL DEFAULT 'USER',
 
-    -- Soft delete flag — we never hard delete users (preserves audit trail)
-    active          BIT             NOT NULL DEFAULT 1,
+    -- BOOLEAN replaces MySQL's BIT type — stores true/false directly
+    active          BOOLEAN         NOT NULL DEFAULT TRUE,
 
-    -- Audit columns (managed by Spring Data JPA @EnableJpaAuditing)
-    created_at      DATETIME(6)     NOT NULL,
-    updated_at      DATETIME(6)     NOT NULL,
-    created_by      VARCHAR(200),       -- email of who created this record
-    last_modified_by VARCHAR(200),      -- email of who last modified this record
+    -- Audit columns — TIMESTAMP(6) stores date+time with microsecond precision
+    -- (same as MySQL DATETIME(6), just different name)
+    created_at      TIMESTAMP(6)    NOT NULL,
+    updated_at      TIMESTAMP(6)    NOT NULL,
+    created_by      VARCHAR(200),
+    last_modified_by VARCHAR(200),
 
     PRIMARY KEY (id),
+    CONSTRAINT uk_users_email UNIQUE (email),
+    CONSTRAINT ck_users_role CHECK (role IN ('ADMIN', 'USER'))
+);
 
-    -- Email uniqueness enforced at DB level — application checks first,
-    -- but this is the safety net against race conditions
-    CONSTRAINT uk_users_email UNIQUE (email)
-
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COMMENT = 'VaultPay user accounts';
+COMMENT ON TABLE users IS 'VaultPay user accounts';

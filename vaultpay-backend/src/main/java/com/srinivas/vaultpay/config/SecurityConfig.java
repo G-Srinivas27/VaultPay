@@ -87,6 +87,7 @@ public class SecurityConfig {
                 .requestMatchers("/h2-console/**").permitAll()
 
                 // ── Swagger UI + OpenAPI spec — public so devs can browse docs ──
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/swagger-ui.html").permitAll()
                 .requestMatchers("/v3/api-docs/**").permitAll()

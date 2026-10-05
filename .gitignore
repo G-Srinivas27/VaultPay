@@ -23,6 +23,7 @@ yarn-error.log*
 application-local.yaml
 application-dev.yaml
 application-prod.yaml
+application-docker.yaml
 
 # OS Files
 .DS_Store

@@ -6,6 +6,7 @@ import com.srinivas.vaultpay.user.dto.RegisterRequest;
 import com.srinivas.vaultpay.user.dto.UserResponse;
 import com.srinivas.vaultpay.user.entity.Role;
 import com.srinivas.vaultpay.user.entity.User;
+import com.srinivas.vaultpay.email.service.EmailService;
 import com.srinivas.vaultpay.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -75,6 +76,9 @@ class UserServiceImplTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private EmailService emailService;
 
     @InjectMocks
     private UserServiceImpl userService;

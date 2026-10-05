@@ -8,6 +8,7 @@ import com.srinivas.vaultpay.transaction.dto.TransferRequest;
 import com.srinivas.vaultpay.transaction.dto.WithdrawRequest;
 import com.srinivas.vaultpay.transaction.entity.Transaction;
 import com.srinivas.vaultpay.transaction.entity.TransactionType;
+import com.srinivas.vaultpay.email.service.EmailService;
 import com.srinivas.vaultpay.transaction.repository.TransactionRepository;
 import com.srinivas.vaultpay.user.entity.Role;
 import com.srinivas.vaultpay.user.entity.User;
@@ -74,6 +75,9 @@ class TransactionServiceImplTest {
 
     @Mock
     private WalletRepository walletRepository;
+
+    @Mock
+    private EmailService emailService;
 
     @InjectMocks
     private TransactionServiceImpl transactionService;

@@ -2,6 +2,6 @@ spring:
   application:
     name: vaultpay
   profiles:
-    active: local   # 'local' → MySQL (your machine)
-                    # 'dev'   → H2 in-memory (used by mvn test)
-                    # 'prod'  → production DB (future)
+    active: local   # 'local'  → PostgreSQL on localhost (bare-metal dev)
+                    # 'docker' → PostgreSQL in Docker (env vars from docker-compose)
+                    # 'dev'    → H2 in-memory (used by mvn test)

@@ -1,0 +1,103 @@
+# ============================================================
+# VaultPay — Docker Compose Configuration
+# ============================================================
+# This file defines the ENTIRE application stack:
+#   1. PostgreSQL database
+#   2. Spring Boot backend
+#   3. React frontend (served by nginx)
+#
+# HOW TO USE:
+#   docker-compose up --build      ← Build & start everything
+#   docker-compose up -d           ← Same, but in background (detached)
+#   docker-compose down            ← Stop everything
+#   docker-compose down -v         ← Stop + DELETE database data
+#   docker-compose logs -f backend ← Follow backend logs
+#
+# HOW IT WORKS:
+#   Docker creates a private network for these 3 containers.
+#   They communicate using service names as hostnames:
+#     - Backend calls "postgres:5432" to reach the database
+#     - Frontend (nginx) calls "backend:8080" to proxy API requests
+#   From YOUR machine, you access them via the published ports.
+# ============================================================
+
+services:
+  # ───────────────────────────────────────────────────────────
+  # PostgreSQL Database
+  # ───────────────────────────────────────────────────────────
+  # This replaces your local MySQL installation.
+  # Data is stored in a Docker VOLUME (persists across restarts).
+  # ───────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine        # Official PostgreSQL image (Alpine = smaller)
+    container_name: vaultpay-db
+    environment:
+      POSTGRES_DB: vaultpay          # Creates this database on first run
+      POSTGRES_USER: vaultpay        # Creates this user on first run
+      POSTGRES_PASSWORD: vaultpay    # Sets the password for this user
+    ports:
+      - "5432:5432"                  # host:container — access from your machine
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # Persist data across container restarts
+    healthcheck:
+      # pg_isready = PostgreSQL's built-in health check tool
+      # Backend won't start until this passes (see depends_on below)
+      test: ["CMD-SHELL", "pg_isready -U vaultpay -d vaultpay"]
+      interval: 5s                   # Check every 5 seconds
+      timeout: 5s                    # Fail if no response in 5 seconds
+      retries: 5                     # Give up after 5 failures
+    restart: unless-stopped          # Auto-restart if container crashes
+
+  # ───────────────────────────────────────────────────────────
+  # Spring Boot Backend
+  # ───────────────────────────────────────────────────────────
+  # Builds from vaultpay-backend/Dockerfile
+  # Waits for PostgreSQL to be healthy before starting
+  # ───────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./vaultpay-backend    # Where the Dockerfile lives
+      dockerfile: Dockerfile
+    container_name: vaultpay-backend
+    environment:
+      # SPRING_PROFILES_ACTIVE=docker activates application-docker.yaml
+      SPRING_PROFILES_ACTIVE: docker
+      # These override the ${...} placeholders in application-docker.yaml
+      # Notice: "postgres" is the SERVICE NAME above — Docker DNS resolves it
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/vaultpay
+      SPRING_DATASOURCE_USERNAME: vaultpay
+      SPRING_DATASOURCE_PASSWORD: vaultpay
+    ports:
+      - "8080:8080"                  # Backend API accessible on localhost:8080
+    depends_on:
+      postgres:
+        condition: service_healthy   # Wait for DB to be ready, not just "started"
+    restart: unless-stopped
+
+  # ───────────────────────────────────────────────────────────
+  # React Frontend (served by nginx)
+  # ───────────────────────────────────────────────────────────
+  # Builds from vaultpay-frontend/Dockerfile
+  # nginx proxies /api/* requests to the backend
+  # ───────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./vaultpay-frontend
+      dockerfile: Dockerfile
+    container_name: vaultpay-frontend
+    ports:
+      - "3000:80"                    # Access frontend on localhost:3000
+    depends_on:
+      - backend                      # Start after backend is running
+    restart: unless-stopped
+
+# ───────────────────────────────────────────────────────────
+# Named Volumes
+# ───────────────────────────────────────────────────────────
+# Docker volumes persist data outside the container lifecycle.
+# Even if you run 'docker-compose down', the data stays.
+# To DELETE the data: 'docker-compose down -v' (the -v flag)
+# ───────────────────────────────────────────────────────────
+volumes:
+  pgdata:
+    driver: local
