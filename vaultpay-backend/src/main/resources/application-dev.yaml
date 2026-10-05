@@ -1,0 +1,41 @@
+# ============================================================
+# application-dev.yaml - H2 in-memory profile (used by tests)
+# ============================================================
+# This profile is activated by @ActiveProfiles("dev") in test classes.
+# Uses H2 in-memory DB so tests never need a real MySQL server.
+# ============================================================
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:vaultpay-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=PostgreSQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: false
+
+  mail:
+    host: localhost
+    port: 25
+    username: test@vaultpay.com
+    password: test
+
+  h2:
+    console:
+      enabled: true
+
+jwt:
+  secret: TestSecretKeyThatIsAtLeast256BitsLongForHMACSHA256AlgorithmInDevMode!!
+  expiration-ms: 86400000
+
+server:
+  port: 8080

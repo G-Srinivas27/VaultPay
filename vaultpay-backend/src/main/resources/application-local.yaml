@@ -1,0 +1,60 @@
+# ============================================================
+# application-local.yaml - PostgreSQL profile (your local machine)
+# ============================================================
+# This file is loaded when spring.profiles.active=local
+# (set in application.yaml).
+#
+# For Docker: these values are overridden by environment
+# variables in docker-compose.yml — so this file is only
+# used when running the app directly (not in Docker).
+# ============================================================
+
+spring:
+  datasource:
+    # JDBC URL format for PostgreSQL:
+    #   jdbc:postgresql://<host>:<port>/<database>
+    # PostgreSQL default port = 5432 (MySQL was 3306)
+    url: jdbc:postgresql://localhost:5432/vaultpay
+    username: vaultpay
+    password: vaultpay
+    # The PostgreSQL JDBC driver class (replaces com.mysql.cj.jdbc.Driver)
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # 'validate' = Hibernate checks that your Java entities match the DB schema
+      # but does NOT create or modify tables (Flyway handles that)
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        # Tells Hibernate to generate PostgreSQL-compatible SQL
+        # (e.g., SERIAL for auto-increment, TEXT for long strings, etc.)
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: true
+    # baseline-on-migrate: if the DB already has tables but no Flyway history,
+    # Flyway will create a baseline entry and continue from there
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: noreply@vaultpay.com
+    password: changeme
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: VaultPaySuperSecretKeyThatIsAtLeast256BitsLongForHMACSHA256Algorithm!!
+  expiration-ms: 86400000
+
+server:
+  port: 8080
